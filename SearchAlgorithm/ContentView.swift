@@ -1,24 +1,24 @@
 //
-//  ContentView.swift
+//  TreeModel.swift
 //  SearchAlgorithm
 //
-//  Created by Kento Akazawa on 1/31/24.
+//  Created by Kento Akazawa on 1/29/24.
 //
 
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+
+  @State var tree = Tree.shared.tree
+
+  var body: some View {
+    DiagramModel(treeNode: tree) { value in
+      Text("\(value.val)")
+        .modifier(RoundedCircleStyle())
     }
+  }
 }
 
 #Preview {
-    ContentView()
+  ContentView()
 }
