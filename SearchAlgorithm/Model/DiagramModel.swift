@@ -10,18 +10,18 @@ import SwiftUI
 struct DiagramModel<A: Identifiable & Comparable, V: View>: View {
   let treeNode: TreeNode<A>
   let node: (A) -> V
-  var searchModel: SearchModel
+  @ObservedObject var searchModel: SearchModel
 
   typealias Key = CollectDict<A.ID, Anchor<CGPoint>>
 
   var body: some View {
     VStack(alignment: .center) {
       node(treeNode.val)
-        .modifier(RoundedCircleStyle())
+        .modifier(RoundedCircleStyle(visiting: treeNode.val as! Unique<Int> == searchModel.cur.val))
         .anchorPreference(key: Key.self, value: .center, transform: {
           [self.treeNode.val.id: $0]
         })
-      HStack(alignment: .bottom, spacing: 10, content: {
+      HStack(alignment: .top, spacing: 10, content: {
         ForEach(treeNode.children, id: \.val.id) { child in
           DiagramModel(treeNode: child, node: self.node, searchModel: searchModel)
         }

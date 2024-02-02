@@ -16,15 +16,13 @@ struct ContentView: View {
 			ScrollView(.horizontal) {
 				DiagramModel(treeNode: searchModel.root, node: { value in
 					Text("\(value.val)")
-						.modifier(RoundedCircleStyle())
 				}, searchModel: searchModel)
 			}
 
       Button(action: {
-        print("Button tapped")
-        searchModel.startSearch(key: Unique(60))
+        searchModel.startSearch(key: Unique(18))
       }, label: {
-        Text("Button")
+        Text("Start Searching")
 					.bold()
 					.frame(width: 280, height: 50)
 					.foregroundColor(.white)

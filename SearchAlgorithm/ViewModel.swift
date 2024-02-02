@@ -9,10 +9,14 @@ import SwiftUI
 
 // each node's UI
 struct RoundedCircleStyle: ViewModifier {
+  var visiting: Bool
+
   func body(content: Content) -> some View {
     content
       .frame(width: 50, height: 50)
       .background(Circle().stroke())
+      // fill the circle red for currently visiting node
+      .background(Circle().fill(Color.red.opacity(visiting ? 0.7 : 0)))
       .background(Circle().fill(Color.white))
       .padding(10)
   }
