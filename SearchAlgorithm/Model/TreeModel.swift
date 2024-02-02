@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct Tree {
+	// Singleton instance
   static let shared = Tree()
 
   // initial tree

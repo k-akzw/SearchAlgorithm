@@ -14,8 +14,10 @@ enum SearchAlgorithms {
 }
 
 class SearchModel: NSObject, ObservableObject {
+	// Singleton instance
   static let shared = SearchModel(searchAlgorithm: .depthFirstSearch, root: Tree.shared.root)
 
+	// MARK: - Variables
   var searchAlgorithm: SearchAlgorithms
   var root: TreeNode<Unique<Int>>
   @Published var cur: TreeNode<Unique<Int>>
@@ -24,6 +26,7 @@ class SearchModel: NSObject, ObservableObject {
 
   private let duration: UInt32 = 1
 
+	// MARK: - Initialization
   init(searchAlgorithm: SearchAlgorithms, root: TreeNode<Unique<Int>>, done: Bool = false, res: Bool = false) {
     self.searchAlgorithm = searchAlgorithm
     self.root = root
@@ -32,6 +35,7 @@ class SearchModel: NSObject, ObservableObject {
     self.res = res
   }
 
+	// MARK: - Public Functions
   func startSearch(key: Unique<Int>) {
     switch searchAlgorithm {
     case .binarySearch:
@@ -39,6 +43,7 @@ class SearchModel: NSObject, ObservableObject {
       done = true
     case .breadthFirstSearch:
       res = breadthFirstSearch(key: key, root: root)
+			done = true
     case .depthFirstSearch:
       depthFirstSearch(key: key, root: root)
       done = true
@@ -47,11 +52,9 @@ class SearchModel: NSObject, ObservableObject {
 }
 
 extension SearchModel {
-  func binarySearch(key: Unique<Int>, root: TreeNode<Unique<Int>>) -> Bool {
-
+	// MARK: - Private Functions
+  private func binarySearch(key: Unique<Int>, root: TreeNode<Unique<Int>>) -> Bool {
     cur = root
-    print(cur.val.val)
-    tmp += 1
     // if key found
     if root.val == key { return true }
 
@@ -65,7 +68,9 @@ extension SearchModel {
     if root.children.count == 1 {
       let child = root.children[0]
       if (root.val < child.val && root.val < key) ||
-          (root.val > child.val && root.val > key) { return binarySearch(key: key, root: child) }
+					(root.val > child.val && root.val > key) {
+				return binarySearch(key: key, root: child)
+			}
       else { return false }
     }
 
@@ -77,17 +82,19 @@ extension SearchModel {
     }
   }
 
-  func breadthFirstSearch(key: Unique<Int>, root: TreeNode<Unique<Int>>) -> Bool {
+  private func breadthFirstSearch(key: Unique<Int>, root: TreeNode<Unique<Int>>) -> Bool {
     var queue = [root]
     while !queue.isEmpty {
       let size = queue.count
       for _ in 0..<size {
         cur = queue.remove(at: 0)
+				// key found
         if cur.val == key { return true }
 
         // pause
         sleep(duration)
 
+				// add all children to queue from left child
         for child in cur.children {
           queue.append(child)
         }
@@ -96,15 +103,19 @@ extension SearchModel {
     return false
   }
 
-  func depthFirstSearch(key: Unique<Int>, root: TreeNode<Unique<Int>>) {
+  private func depthFirstSearch(key: Unique<Int>, root: TreeNode<Unique<Int>>) {
     var stack = [root]
     while !stack.isEmpty {
+			// pop from front since adding to the front
+			// Note: popping from last gives errors sometimes
       cur = stack.remove(at: 0)
+			// key found
       if cur.val == key { return }
 
       // pause
       sleep(duration)
 
+			// add all children to stack from right child
       for child in cur.children.reversed() {
         stack.insert(child, at: 0)
       }

@@ -17,7 +17,7 @@ struct DiagramModel<A: Identifiable & Comparable, V: View>: View {
   var body: some View {
     VStack(alignment: .center) {
       node(treeNode.val)
-        .modifier(RoundedCircleStyle(visiting: treeNode.val as! Unique<Int> == searchModel.cur.val))
+        .modifier(RoundedCircleStyle())
         .anchorPreference(key: Key.self, value: .center, transform: {
           [self.treeNode.val.id: $0]
         })

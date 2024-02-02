@@ -13,10 +13,12 @@ struct ContentView: View {
 
   var body: some View {
     VStack {
-      DiagramModel(treeNode: searchModel.root, node: { value in
-        Text("\(value.val)")
-          .modifier(RoundedCircleStyle())
-      }, searchModel: searchModel)
+			ScrollView(.horizontal) {
+				DiagramModel(treeNode: searchModel.root, node: { value in
+					Text("\(value.val)")
+						.modifier(RoundedCircleStyle())
+				}, searchModel: searchModel)
+			}
 
       Button(action: {
         print("Button tapped")
