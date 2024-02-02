@@ -21,7 +21,6 @@ class SearchModel: NSObject, ObservableObject {
   @Published var cur: TreeNode<Unique<Int>>
   @Published var done = false
   @Published var res = false
-  @Published var tmp = 1
 
   private let duration: UInt32 = 1
 
