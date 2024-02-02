@@ -11,9 +11,15 @@ struct Tree {
   static let shared = Tree()
 
   // initial tree
-  let tree: TreeNode<Unique<Int>> = TreeNode<Int>(val: 50, children: [
+  let root: TreeNode<Unique<Int>> = TreeNode<Int>(val: 50, children: [
     TreeNode(val: 25, children: [
-      TreeNode(val: 12),
+      TreeNode(val: 12, children: [
+        TreeNode(val: 6, children: [
+          TreeNode(val: 3),
+          TreeNode(val: 9)
+        ]),
+        TreeNode(val: 18)
+      ]),
       TreeNode(val: 37)
     ]),
     TreeNode(val: 75, children: [
@@ -24,12 +30,17 @@ struct Tree {
 }
 
 // each tree node has value and children
-struct TreeNode<A> {
+struct TreeNode<A: Equatable>: Equatable {
   var val: A
   var children: [TreeNode<A>] = []
   init(val: A, children: [TreeNode<A>] = []) {
     self.val = val
-    self.children = children
+    // binary tree so the children are at most 2
+    self.children = Array(children.prefix(2))
+  }
+
+  static func == (lhs: TreeNode<A>, rhs: TreeNode<A>) -> Bool {
+    return lhs.val == rhs.val && lhs.children == rhs.children
   }
 }
 
@@ -45,9 +56,18 @@ extension TreeNode {
 
 // new variable so that it becomes identifiable
 // Note: Int is not identifiable
-class Unique<A>: Identifiable {
-  let val: A
+class Unique<A>: Identifiable, Comparable where A: Comparable {
+  var val: A
+
   init(_ val: A) {
     self.val = val
+  }
+
+  static func == (lhs: Unique<A>, rhs: Unique<A>) -> Bool {
+    return lhs.val == rhs.val
+  }
+
+  static func < (lhs: Unique<A>, rhs: Unique<A>) -> Bool {
+    return lhs.val < rhs.val
   }
 }
