@@ -108,7 +108,7 @@ extension SearchModel {
     while !stack.isEmpty {
 			// pop from front since adding to the front
 			// Note: popping from last gives errors sometimes
-      cur = stack.remove(at: 0)
+      cur = stack.removeFirst()
 			// key found
       if cur.val == key { return }
 

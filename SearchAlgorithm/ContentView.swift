@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
 
-  @StateObject var searchModel = SearchModel.shared
+  @ObservedObject var searchModel = SearchModel.shared
 
   var body: some View {
     VStack {
@@ -25,6 +25,11 @@ struct ContentView: View {
         searchModel.startSearch(key: Unique(60))
       }, label: {
         Text("Button")
+					.bold()
+					.frame(width: 280, height: 50)
+					.foregroundColor(.white)
+					.background(Color.blue)
+					.cornerRadius(12)
       })
     }
   }
