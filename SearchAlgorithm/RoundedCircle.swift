@@ -1,5 +1,5 @@
 //
-//  ViewModel.swift
+//  RoundedCircle.swift
 //  SearchAlgorithm
 //
 //  Created by Kento Akazawa on 1/29/24.

@@ -6,38 +6,65 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct ContentView: View {
 
   @ObservedObject var searchModel = SearchModel.shared
   @State var searchAlgorithm: SearchAlgorithms = .binarySearch
   @State var key: Int = 50
-
+  @State var edit = false
+  
   var body: some View {
     VStack {
-      SearchPicker(searchAlgorithm: $searchAlgorithm, key: $key)
-
-      ResultView(searchModel: searchModel)
-
-      ScrollView(.horizontal) {
-        DiagramModel(treeNode: searchModel.root, node: { value in
-          Text("\(value.val)")
-        }, searchModel: searchModel)
+      if edit {
+        EditView(searchModel: searchModel, edit: $edit)
+      } else {
+        SearchView(searchModel: searchModel,
+                   searchAlgorithm: $searchAlgorithm,
+                   key: $key,
+                   edit: $edit)
       }
-
-      Button(action: {
-        searchModel.startSearch(key: Unique(key), using: searchAlgorithm)
-      }, label: {
-        Text("Start Searching")
-          .bold()
-          .frame(width: 280, height: 50)
-          .foregroundColor(.white)
-          .background(Color.blue)
-          .cornerRadius(12)
-      })
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(Color.secondary.opacity(0.1))
+  }
+}
+
+struct SearchView: View {
+  @ObservedObject var searchModel: SearchModel
+  @Binding var searchAlgorithm: SearchAlgorithms
+  @Binding var key: Int
+  @Binding var edit: Bool
+
+  var body: some View {
+    HStack {
+      Spacer()
+      Text("Edit")
+        .foregroundStyle(.blue)
+        .onTapGesture {
+          edit = true
+        }
+    }
+    .padding(.horizontal)
+    .padding(.horizontal)
+
+    SearchPicker(searchAlgorithm: $searchAlgorithm, key: $key)
+
+    ResultView(searchModel: searchModel)
+
+    TreeView(searchModel: searchModel, tree: Tree.shared)
+
+    Button(action: {
+      searchModel.startSearch(key: Unique(key), using: searchAlgorithm, from: Tree.shared.root)
+    }, label: {
+      Text("Start Searching")
+        .bold()
+        .frame(width: 280, height: 50)
+        .foregroundColor(.white)
+        .background(Color.blue)
+        .cornerRadius(12)
+    })
   }
 }
 

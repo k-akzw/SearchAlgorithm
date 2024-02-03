@@ -11,6 +11,7 @@ struct DiagramModel<A: Identifiable & Comparable, V: View>: View {
   let treeNode: TreeNode<A>
   let node: (A) -> V
   @ObservedObject var searchModel: SearchModel
+  @ObservedObject var tree: Tree
 
   typealias Key = CollectDict<A.ID, Anchor<CGPoint>>
 
@@ -23,7 +24,7 @@ struct DiagramModel<A: Identifiable & Comparable, V: View>: View {
         })
       HStack(alignment: .top, spacing: 10, content: {
         ForEach(treeNode.children, id: \.val.id) { child in
-          DiagramModel(treeNode: child, node: self.node, searchModel: searchModel)
+          DiagramModel(treeNode: child, node: self.node, searchModel: searchModel, tree: tree)
         }
       })
     }.backgroundPreferenceValue(Key.self, { (centers: [A.ID: Anchor<CGPoint>]) in

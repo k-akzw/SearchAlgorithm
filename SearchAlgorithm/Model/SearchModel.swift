@@ -15,16 +15,15 @@ enum SearchAlgorithms: String, CaseIterable, Identifiable {
   var id: Self { self }
 }
 
-class SearchModel: NSObject, ObservableObject {
+class SearchModel: ObservableObject {
 	// Singleton instance
   static let shared = SearchModel()
 
 	// MARK: - Variables
-  let root: TreeNode<Unique<Int>> = Tree.shared.root
   @Published var cur: TreeNode<Unique<Int>>
   @Published var found = false
   @Published var done = false
-  
+
   private let duration: UInt32 = 1
 
 	// MARK: - Initialization
@@ -35,7 +34,7 @@ class SearchModel: NSObject, ObservableObject {
   }
 
 	// MARK: - Public Functions
-  func startSearch(key: Unique<Int>, using searchAlgorithm: SearchAlgorithms) {
+  func startSearch(key: Unique<Int>, using searchAlgorithm: SearchAlgorithms, from root: TreeNode<Unique<Int>>) {
     done = false
     
     switch searchAlgorithm {

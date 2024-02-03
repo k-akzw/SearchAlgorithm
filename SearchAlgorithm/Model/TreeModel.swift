@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct Tree {
-	// Singleton instance
+class Tree: ObservableObject {
+  // Singleton instance
   static let shared = Tree()
 
   // initial tree
-  let root: TreeNode<Unique<Int>> = TreeNode<Int>(val: 50, children: [
+  @Published var root: TreeNode<Unique<Int>> = TreeNode<Int>(val: 50, children: [
     TreeNode(val: 25, children: [
       TreeNode(val: 12, children: [
         TreeNode(val: 6, children: [
@@ -28,12 +28,58 @@ struct Tree {
       TreeNode(val: 87)
     ])
   ]).map(Unique.init)
+
+  // MARK: - Public Functions
+  func insertNode(val: Unique<Int>) {
+    insertNodeUtils(val: val)
+
+    // to update the UI
+    // since @root is @Published
+    // UI gets updated if @root changes
+    root = root
+  }
+
+  private func insertNodeUtils(val: Unique<Int>) {
+    var cur = root
+    while true {
+      if cur.children.isEmpty {
+        cur.children.append(TreeNode(val: val))
+        return
+      }
+
+      // if 1 child
+      if cur.children.count == 1 {
+        if val < cur.val {
+          if cur.children[0].val < cur.val { cur = cur.children[0] }
+          else {
+            let tmp = cur.children[0]
+            cur.children[0] = TreeNode(val: val)
+            cur.children.append(tmp)
+            return
+          }
+        } else {
+          if cur.children[0].val > cur.val { cur = cur.children[0] }
+          else {
+            cur.children.append(TreeNode(val: val))
+            return
+          }
+        }
+      } 
+      // if 2 children
+      else {
+        if val < cur.val { cur = cur.children[0] }
+        else { cur = cur.children[1] }
+      }
+    }
+  }
 }
 
 // each tree node has value and children
-struct TreeNode<A: Equatable>: Equatable {
+class TreeNode<A: Equatable>: Equatable, Identifiable {
+  let id = UUID()
   var val: A
-  var children: [TreeNode<A>] = []
+  @Published var children: [TreeNode<A>] = []
+
   init(val: A, children: [TreeNode<A>] = []) {
     self.val = val
     // binary tree so the children are at most 2
