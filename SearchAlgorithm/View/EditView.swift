@@ -27,14 +27,22 @@ struct EditView: View {
       .padding(.bottom, 50)
       .foregroundColor(.blue)
       .onTapGesture {
+        tree.nodeToDelete = nil
         edit = false
       }
 
-      TreeView(searchModel: searchModel, tree: tree)
+      Spacer(minLength: 50)
 
-      TextField("Enter key: ", text: $input)
+      TreeView(searchModel: searchModel, tree: tree, edit: $edit)
+
+      Spacer()
+
+      TextField("Enter value of new node: ", text: $input)
+        .padding(.horizontal)
         .keyboardType(.numberPad)
         .frame(width: 280, height: 50)
+        .background(Color.white)
+        .cornerRadius(12)
         .onChange(of: input) { oldValue, newValue in
           self.input = String(newValue.filter { "0123456789".contains($0) })
           if let num = Int(input) {
@@ -49,12 +57,20 @@ struct EditView: View {
         .cornerRadius(12)
         .onTapGesture {
           if !input.isEmpty {
-            print("Insert button tapped")
             Tree.shared.insertNode(val: Unique(val))
           }
         }
 
-      Spacer()
+      Text("Delete Node")
+        .frame(width: 280, height: 50)
+        .foregroundColor(.white)
+        .background(Color.red)
+        .cornerRadius(12)
+        .onTapGesture {
+          tree.deleteNode()
+        }
+
+      Spacer(minLength: 20)
     }
     .background(Color.secondary.opacity(0.1))
   }

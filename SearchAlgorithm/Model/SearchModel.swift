@@ -7,12 +7,10 @@
 
 import SwiftUI
 
-enum SearchAlgorithms: String, CaseIterable, Identifiable {
+enum SearchAlgorithms: String, CaseIterable {
   case binarySearch = "Binary Search"
   case breadthFirstSearch = "Breadth First Search"
   case depthFirstSearch = "Depth First Search"
-
-  var id: Self { self }
 }
 
 class SearchModel: ObservableObject {
@@ -48,6 +46,9 @@ class SearchModel: ObservableObject {
   }
 
   // MARK: - Private Functions
+
+  // updates @found and @done
+  // in main thread to update UI
   private func searchDone(found: Bool) {
     DispatchQueue.main.async {
       self.found = found
@@ -60,46 +61,39 @@ class SearchModel: ObservableObject {
 extension SearchModel {
 	// MARK: - Private Functions
   private func binarySearch(key: Unique<Int>, root: TreeNode<Unique<Int>>) {
+    var currentNode = root
     DispatchQueue.global(qos: .background).async { [self] in
-      // pause
-      sleep(duration)
+      while true {
+        // pause
+        sleep(duration)
 
-      // update currently visiting node on main thread
-      // to update the UI
-      DispatchQueue.main.async {
-        self.cur = root
-      }
-
-      // if key found
-      if root.val == key {
-        searchDone(found: true)
-        return
-      }
-
-      // if there is no children
-      if root.children.isEmpty {
-        searchDone(found: false)
-        return
-      }
-
-      // if there is only 1 child
-      if root.children.count == 1 {
-        let child = root.children[0]
-        if (root.val < child.val && root.val < key) ||
-            (root.val > child.val && root.val > key) {
-          return binarySearch(key: key, root: child)
+        // update currently visiting node on main thread
+        // to update the UI
+        DispatchQueue.main.async {
+          self.cur = currentNode
         }
-        else {
-          searchDone(found: false)
+
+        // if key found
+        if key == currentNode.val {
+          searchDone(found: true)
           return
         }
-      }
 
-      // if there are 2 children
-      if key < root.val {
-        return binarySearch(key: key, root: root.children[0])
-      } else {
-        return binarySearch(key: key, root: root.children[1])
+        if key < currentNode.val {
+          if let newCur = currentNode.left {
+            currentNode = newCur
+          } else {
+            searchDone(found: false)
+            return
+          }
+        } else {
+          if let newCur = currentNode.right {
+            currentNode = newCur
+          } else {
+            searchDone(found: false)
+            return
+          }
+        }
       }
     }
   }
@@ -129,7 +123,7 @@ extension SearchModel {
           }
 
           // add all children to queue from left child
-          for child in currentNode.children {
+          for child in currentNode.getChildren() {
             queue.append(child)
           }
         }
@@ -163,7 +157,7 @@ extension SearchModel {
         }
 
         // add all children to stack from right child
-        for child in currentNode.children.reversed() {
+        for child in currentNode.getChildren().reversed() {
           stack.insert(child, at: 0)
         }
       }
